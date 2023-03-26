@@ -19,7 +19,7 @@ const store = async (req, res, next) => {
             src.on('end', async () => {
                 try {
 
-                    let product = new Product({ ...payload, image_url: filename})
+                    let product = new Product({ ...payload, img_path: filename})
                     await product.save()
                     return res.json(product);
                 } catch(err) {
@@ -57,6 +57,20 @@ const store = async (req, res, next) => {
     }
 }
 
+const index = async (req, res, next) => {
+    try {
+        let product = await Product
+        .find()
+        .skip(0)
+        .limit(10);
+        return res.json(product);
+    } catch (err) {
+        next(err);
+    }
+}
+
 module.exports = {
-    store
+    store,
+    index
+
 }
