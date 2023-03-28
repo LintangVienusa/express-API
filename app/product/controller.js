@@ -156,5 +156,4 @@ module.exports = {
     index,
     update,
     destroy
-
 }
