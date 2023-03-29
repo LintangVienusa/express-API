@@ -19,7 +19,17 @@ const productSchema = Schema({
         default: 0
     },
 
+    createdAt: {
+        type: Date
+    },
+
+    updatedAt: {
+        type: Date
+    },
+
     img_path: String,
+
+    
 },{ timestamp: true });
 
 module.exports = model('Product', productSchema);
