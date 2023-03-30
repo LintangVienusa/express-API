@@ -2,10 +2,23 @@ const path = require('path');
 const fs = require('fs');
 const config = require('../config');
 const Product = require('./model');
+const Categories = require('../categories/model');
 
-const store = async (req, res, next) => {
+const store = async (req, res, next) => { 
     try{
         let payload = req.body;
+
+        // Relation with categories
+        if(payload.categories) {
+            let categories = await Categories.findOne({name: {$regex: payload.categories, $options: 'i'}})
+            if(categories) {
+                payload = {...payload, categories: categories._id}
+            }else {
+                delete payload.categories
+            }
+
+        }
+
         if(req.file) {
             let tmp_path = req.file.path;
             let originalExt = req.file.originalname.split('.')[req.file.originalname.split('.').length - 1];
@@ -63,7 +76,8 @@ const index = async (req, res, next) => {
         let product = await Product
         .find()
         .skip(parseInt(skip))
-        .limit(parseInt(limit));
+        .limit(parseInt(limit))
+        .populate('categories');
         return res.json(product);
     } catch (err) {
         next(err);
@@ -74,6 +88,17 @@ const update = async (req, res, next) => {
     try{
         let { id }= req.params;
         let payload = req.body;
+
+        // Relation with categories
+        if(payload.categories) {
+            let categories = await Categories.findOne({name: {$regex: payload.categories, $options: 'i'}})
+            if(categories) {
+                payload = {...payload, categories: categories._id}
+            }else {
+                delete payload.categories
+            }
+
+        }
 
         if(req.file) {
             let tmp_path = req.file.path;

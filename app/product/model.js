@@ -19,6 +19,11 @@ const productSchema = Schema({
         default: 0
     },
 
+    categories: {
+        type: Schema.Types.ObjectId,
+        ref: 'Categories'
+    },
+
     createdAt: {
         type: Date
     },
