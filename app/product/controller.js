@@ -3,6 +3,7 @@ const fs = require('fs');
 const config = require('../config');
 const Product = require('./model');
 const Categories = require('../categories/model');
+const Tag = require('../tag/model');
 
 const store = async (req, res, next) => { 
     try{
@@ -11,6 +12,17 @@ const store = async (req, res, next) => {
         // Relation with categories
         if(payload.categories) {
             let categories = await Categories.findOne({name: {$regex: payload.categories, $options: 'i'}})
+            if(categories) {
+                payload = {...payload, categories: categories._id}
+            }else {
+                delete payload.categories
+            }
+
+        }
+
+        // Relation with Tags
+        if(payload.tags && payload.length > 0) {
+            let tags = await Tag.findOne({name: {$regex: payload.categories, $options: 'i'}})
             if(categories) {
                 payload = {...payload, categories: categories._id}
             }else {

@@ -24,6 +24,11 @@ const productSchema = Schema({
         ref: 'Categories'
     },
 
+    tags: {
+        type: Schema.Types.ObjectId,
+        ref: 'Tag'
+    },
+
     createdAt: {
         type: Date
     },
