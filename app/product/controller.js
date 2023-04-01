@@ -21,8 +21,8 @@ const store = async (req, res, next) => {
         }
 
         // Relation with Tags
-        if(payload.tags && payload.length > 0) {
-            let tags = await Tag.findOne({name: {$in: payload.tags }})
+        if(payload.tags && payload.tags.length > 0) {
+            let tags = await Tag.find({name: {$in: payload.tags }})
             if(tags.length) {
                 payload = {...payload, tags: tags.map(tags => tags._id)}
             }else {
@@ -113,8 +113,8 @@ const update = async (req, res, next) => {
         }
 
         // Relation with tags
-        if(payload.tags && payload.length > 0) {
-            let tags = await Tag.findOne({name: {$in: payload.tags }})
+        if(payload.tags && payload.tags.length > 0) {
+            let tags = await Tag.find({name: {$in: payload.tags }})
             if(tags.length) {
                 payload = {...payload, tags: tags.map(tags => tags._id)}
             }else {
