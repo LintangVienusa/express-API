@@ -22,11 +22,11 @@ const store = async (req, res, next) => {
 
         // Relation with Tags
         if(payload.tags && payload.length > 0) {
-            let tags = await Tag.findOne({name: {$regex: payload.categories, $options: 'i'}})
-            if(categories) {
-                payload = {...payload, categories: categories._id}
+            let tags = await Tag.findOne({name: {$in: payload.tags }})
+            if(tags.length) {
+                payload = {...payload, tags: tags.map(tags => tags._id)}
             }else {
-                delete payload.categories
+                delete payload.tags
             }
 
         }
@@ -89,7 +89,8 @@ const index = async (req, res, next) => {
         .find()
         .skip(parseInt(skip))
         .limit(parseInt(limit))
-        .populate('categories');
+        .populate('categories')
+        .populate('tags');
         return res.json(product);
     } catch (err) {
         next(err);
@@ -108,6 +109,16 @@ const update = async (req, res, next) => {
                 payload = {...payload, categories: categories._id}
             }else {
                 delete payload.categories
+            }
+        }
+
+        // Relation with tags
+        if(payload.tags && payload.length > 0) {
+            let tags = await Tag.findOne({name: {$in: payload.tags }})
+            if(tags.length) {
+                payload = {...payload, tags: tags.map(tags => tags._id)}
+            }else {
+                delete payload.tags
             }
 
         }
