@@ -84,14 +84,46 @@ const store = async (req, res, next) => {
 
 const index = async (req, res, next) => {
     try {
-        let { skip = 0, limit = 10 } = req.query;
+        let { skip = 0, limit = 10, q = '', categories = '', tags = [''] } = req.query;
+
+        let criteria = {};
+
+        if(q.length) {
+            criteria = {
+                ...criteria,
+                productName: {$regex: `${q}`, $options: 'i'}
+            }
+        }
+
+        if(categories.length) {
+            let categoryResults = await Categories.findOne({name: {$regex: categories, $options: 'i'}})
+
+            if(categories) {
+                criteria = {...criteria, categories: categoryResults._id}
+            }
+        }
+
+        if(tags.length) {
+            let tagResult = await Tag.find({name: {$in: tags }})
+            if(tagResult.length > 0) {
+                criteria = {
+                    ...criteria, 
+                    tags: {$in: tagResult.map(tags => tags._id)}
+                }
+            }
+        }
+        
+        let count = await Product.find().countDocuments()
         let product = await Product
-        .find()
+        .find(criteria)
         .skip(parseInt(skip))
         .limit(parseInt(limit))
         .populate('categories')
         .populate('tags');
-        return res.json(product);
+        return res.json({
+            data: product,
+            count: count
+        });
     } catch (err) {
         next(err);
     }
