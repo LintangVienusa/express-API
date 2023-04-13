@@ -5,6 +5,7 @@ const register = async(req, res, next) => {
         const payload = req.body;
         let user = new User(payload);
         await user.save();
+        console.log(user);
         return res.json(user);
 
     } catch(err) {

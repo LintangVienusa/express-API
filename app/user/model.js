@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const { Schema, model } = mongoose;
-const AutoIncrement = require("mongoose-sequence")(mongoose);
+// const AutoIncrement = require("mongoose-sequence")(mongoose);
 const bcrypt = require("bcrypt");
 
 let userSchema = Schema({
@@ -11,11 +11,7 @@ let userSchema = Schema({
         maxLength: [255, 'Maximum length is 255 characters'],
         minLength: [3, 'Minimum length is 3 characters']
     },
-
-    customer_id: {
-        type: Number
-    },
-
+    customer_id: Number,
     email: {
         type: String,
         required: [true, 'Email cannot be empty'],
@@ -62,10 +58,11 @@ userSchema.path('email').validate(async function(value) {
 const HASH_ROUND = 10;
 userSchema.pre('save', function(next) {
     this.password = bcrypt.hashSync(this.password, HASH_ROUND);
+    console.log("here!")
     next()
 }) 
 
-userSchema.plugin(AutoIncrement, {inc_field: 'customer_id'})
+// userSchema.plugin(AutoIncrement, {inc_field: 'customer_id'})
 
 
 module.exports = model('User', userSchema)
