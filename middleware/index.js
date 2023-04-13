@@ -1,5 +1,5 @@
 const jwt  = require("jsonwebtoken")
-const { getToken } = require("../utils")
+const { getToken, policyFor } = require("../utils")
 const config = require("../app/config")
 const User = require("../app/user/model")
 
@@ -33,6 +33,20 @@ const decodeToken = () => {
     }
 }
 
+const policyCheck = () => {
+    return (req, res, next) => {
+        let policy = policyFor(req.user)
+        if (!policy.can(action, subject)) {
+            return res.json({
+                error: 1,
+                message: `You are not allowed to ${action} ${subject}` 
+            })
+        }
+        next()
+    }
+}
+
 module.exports = {
-    decodeToken
+    decodeToken,
+    policyCheck
 }
