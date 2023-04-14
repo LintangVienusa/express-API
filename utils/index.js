@@ -20,10 +20,10 @@ const policies = {
         can('update', 'User', {_id: user_id})
         can('read', 'Cart', {user_id: user._id})
         can('update', 'Cart', {user_id: user._id})
-        can('view', 'DeliveryAddress')
-        can('create', 'DeliveryAddress', {user_id: user._id})
-        can('update', 'DeliveryAddress', {user_id: user._id})
-        can('delete', 'DeliveryAddress', {user_id: user._id})
+        can('view', 'deliveryAddress')
+        can('create', 'deliveryAddress', {user_id: user._id})
+        can('update', 'deliveryAddress', {user_id: user._id})
+        can('delete', 'deliveryAddress', {user_id: user._id})
         can('read', 'Invoice', {user_id: user._id})
         
     },
