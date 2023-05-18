@@ -37,7 +37,7 @@ const policyFor = user => {
     if(user && typeof policies[user.role] === 'function') {
         policies[user.role](user, builder)
     }else {
-        policyFor['guest'](user, builder)
+        policies['guest'](user, builder)
     }
     return new Ability(builder.rules)
 }

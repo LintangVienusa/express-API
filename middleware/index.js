@@ -33,7 +33,7 @@ const decodeToken = () => {
     }
 }
 
-const policyCheck = () => {
+const policyCheck = (action, subject) => {
     return (req, res, next) => {
         let policy = policyFor(req.user)
         if (!policy.can(action, subject)) {
