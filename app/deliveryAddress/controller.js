@@ -24,12 +24,29 @@ const store = async (req, res, next) => {
     }
 }
 
+const index = async (req, res, next) =>  {
+    try {
+        let { skip = 0, limit = 10 } = req.query
+        let count = await deliveryAddress.find().countDocuments()
+        let addresses = await deliveryAddress
+        .find()
+        .skip(parseInt(skip))
+        .limit(parseInt(limit))
+        return res.json({
+            data: addresses,
+            count: count
+        })
+    } catch (err) {
+        next(err)
+    }
+}
+
 const update = async(req, res, next) => {
-    let policy = policyFor(req.user);
     try {
         let { _id, ...payload } = req.body;
         let { id } = req.params;
         let address = await deliveryAddress.findById(id);
+        let policy = policyFor(req.user);
         let subjectAddress = subject('deliveryAdress', {...address, user_id: address.user});
 
         if(!policy.can('update', subjectAddress)) {
@@ -53,6 +70,38 @@ const update = async(req, res, next) => {
     }
 }
 
+const destroy = async(req, res, next) => {
+    try {
+        let { _id, ...payload } = req.body;
+        let { id } = req.params;
+        let address = await deliveryAddress.findById(id);
+        let policy = policyFor(req.user);
+        let subjectAddress = subject('deliveryAdress', {...address, user_id: address.user});
+
+        if(!policy.can('update', subjectAddress)) {
+            return res.json({
+                error: 1,
+                message: `You're not allowed to delete this resource`
+            });
+        }
+
+        address = await deliveryAddress.findByIdAndDelete(id);
+        res.json(address);
+    } catch (err) {
+        if(err && err.name == 'ValidationError') {
+            return res.json({
+                error: 1,
+                message: err.message,
+                fields: err.errors
+            });
+        }
+        next(err)
+    }
+}
+
 module.exports = {
-    store
+    store,
+    index,
+    update,
+    destroy
 }
